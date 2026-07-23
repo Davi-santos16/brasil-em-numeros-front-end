@@ -23,13 +23,13 @@ export interface DashboardResponse {
 
 export const DashboardService = {
   async getDashboardData(): Promise<DashboardResponse> {
-    const response = await api.get<DashboardResponse>('/dashboard', {
+    const response = await api.get<any>('/dashboard', {
       params: {
         indicador: 'densidade',
         regiao: 'norte'
       }
     });
-    console.log('Dados do dashboard recebidos:', response.data);
-    return response.data;
+    // Se o backend retornar dentro de 'dadosDaEquipe', extrai. Senão, usa a raiz.
+    return response.data.dadosDaEquipe || response.data;
   }
 }

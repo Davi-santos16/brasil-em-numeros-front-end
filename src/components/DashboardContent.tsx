@@ -38,6 +38,19 @@ export function DashboardContent() {
     return null;
   }
 
+  // Safety check to prevent crashing if the backend data format is still slightly different
+  if (!data.figura || !data.kpis) {
+    return (
+      <div className="flex flex-col h-64 items-center justify-center rounded-xl border border-destructive bg-destructive/10 p-6 text-center">
+        <span className="text-destructive font-bold mb-2">Formato de dados inesperado da API!</span>
+        <span className="text-destructive/80 text-sm">A API respondeu com sucesso, mas as propriedades "figura" ou "kpis" não foram encontradas. Verifique a aba Network no console.</span>
+        <pre className="mt-4 text-xs bg-black/10 p-2 rounded text-left max-w-full overflow-auto">
+          {JSON.stringify(data).slice(0, 300) + '...'}
+        </pre>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* KPI Section */}
