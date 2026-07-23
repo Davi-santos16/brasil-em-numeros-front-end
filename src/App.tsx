@@ -1,12 +1,12 @@
 import "./index.css"
+import { AppSidebar } from "@/components/app-sidebar"
+import { DashboardPage } from "@/pages/DashboardPage"
 
 function App() {
   return (
-    <>
-    <div className="bg-red-200 text-amber-700">
-      ola
-    </div>
-    </>
+    <AppSidebar>
+      <DashboardPage />
+    </AppSidebar>
   )
 }
 
