@@ -19,6 +19,7 @@ interface Estado {
 const INDICADORES = [
   { value: 'populacao', label: 'População' },
   { value: 'densidade', label: 'Densidade' },
+  { value: 'area', label: 'Área' },
 ];
 
 const REGIOES = [
