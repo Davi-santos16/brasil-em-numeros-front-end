@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import Plot from 'react-plotly.js';
-import { DashboardService } from '@/services/dashboard.service';
-import type { DashboardResponse } from '@/services/dashboard.service';
+import { StatCards } from "./StatCards";
+import { useEffect, useState } from "react";
+import Plot from "react-plotly.js";
+import { DashboardService } from "@/services/dashboard.service";
+import type { DashboardResponse } from "@/services/dashboard.service";
 
 export function DashboardContent() {
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -11,7 +12,7 @@ export function DashboardContent() {
   useEffect(() => {
     DashboardService.getDashboardData()
       .then(setData)
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         setError(err.message);
       })
@@ -21,7 +22,9 @@ export function DashboardContent() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center rounded-xl border border-dashed">
-        <span className="text-muted-foreground">Carregando dados do servidor...</span>
+        <span className="text-muted-foreground">
+          Carregando dados do servidor...
+        </span>
       </div>
     );
   }
@@ -29,7 +32,9 @@ export function DashboardContent() {
   if (error) {
     return (
       <div className="flex h-64 items-center justify-center rounded-xl border border-destructive bg-destructive/10">
-        <span className="text-destructive font-medium">Erro ao carregar os dados: {error}</span>
+        <span className="text-destructive font-medium">
+          Erro ao carregar os dados: {error}
+        </span>
       </div>
     );
   }
@@ -38,14 +43,20 @@ export function DashboardContent() {
     return null;
   }
 
-  // Safety check to prevent crashing if the backend data format is still slightly different
   if (!data.figura || !data.kpis) {
     return (
       <div className="flex flex-col h-64 items-center justify-center rounded-xl border border-destructive bg-destructive/10 p-6 text-center">
-        <span className="text-destructive font-bold mb-2">Formato de dados inesperado da API!</span>
-        <span className="text-destructive/80 text-sm">A API respondeu com sucesso, mas as propriedades "figura" ou "kpis" não foram encontradas. Verifique a aba Network no console.</span>
+        <span className="text-destructive font-bold mb-2">
+          Formato de dados inesperado da API!
+        </span>
+
+        <span className="text-destructive/80 text-sm">
+          A API respondeu com sucesso, mas as propriedades "figura" ou "kpis"
+          não foram encontradas.
+        </span>
+
         <pre className="mt-4 text-xs bg-black/10 p-2 rounded text-left max-w-full overflow-auto">
-          {JSON.stringify(data).slice(0, 300) + '...'}
+          {JSON.stringify(data).slice(0, 300) + "..."}
         </pre>
       </div>
     );
@@ -53,31 +64,14 @@ export function DashboardContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* KPI Section */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Média ({data.regiao})
-          </h3>
-          <p className="text-2xl font-bold">{data.kpis.media.toFixed(2)}</p>
-        </div>
-        
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Maior ({data.kpis.maior.nome})
-          </h3>
-          <p className="text-2xl font-bold text-emerald-600">{data.kpis.maior.valor}</p>
-        </div>
 
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Menor ({data.kpis.menor.nome})
-          </h3>
-          <p className="text-2xl font-bold text-rose-600">{data.kpis.menor.valor}</p>
-        </div>
-      </div>
+      <StatCards
+        media={data.kpis.media}
+        maior={data.kpis.maior}
+        menor={data.kpis.menor}
+        regiao={data.regiao}
+      />
 
-      {/* Chart Section */}
       <div className="rounded-xl border bg-card text-card-foreground shadow p-4 w-full h-[550px] flex justify-center">
         <Plot
           data={data.figura.data}
@@ -86,10 +80,11 @@ export function DashboardContent() {
             autosize: true,
             margin: { t: 40, r: 20, l: 40, b: 120 },
           }}
-          useResizeHandler={true}
-          style={{ width: '100%', height: '100%' }}
+          useResizeHandler
+          style={{ width: "100%", height: "100%" }}
         />
       </div>
+
     </div>
   );
 }
