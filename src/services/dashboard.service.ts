@@ -26,7 +26,7 @@ export const DashboardService = {
     const response = await api.get<any>('/dashboard', {
       params: {
         indicador: 'densidade',
-        regiao: 'norte'
+        regiao: 'nordeste'
       }
     });
     // Se o backend retornar dentro de 'dadosDaEquipe', extrai. Senão, usa a raiz.
