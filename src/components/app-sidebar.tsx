@@ -83,17 +83,20 @@ function TeamSwitcher({
   }
 
   return (
-    <SidebarMenu>
+    <SidebarMenu 
+    style={{ backgroundColor: "black"
+    }}
+    className="text-white">
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
           render={<div />}
-          className="cursor-default hover:bg-transparent"
+          className="cursor-pointer hover:bg-transparent"
         >
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
             <activeTeam.logo className="size-4" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          <div className="grid flex-1 text-left text-sm leading-tight hover:text-stone-300">
             <span className="truncate font-medium">{activeTeam.name}</span>
             <span className="truncate text-xs">{activeTeam.plan}</span>
           </div>
@@ -114,14 +117,14 @@ function NavMain({
   }[]
 }) {
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Menu</SidebarGroupLabel>
+    <SidebarGroup style={{ backgroundColor: "black"}}>
+      <SidebarGroupLabel className="text-white">Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton render={<div />} tooltip={item.title} isActive={item.isActive} className="cursor-default hover:bg-sidebar-accent">
-              {item.icon && <item.icon />}
-              <span>{item.title}</span>
+            <SidebarMenuButton  render={<div />} tooltip={item.title} isActive={item.isActive} className="cursor-pointer hover:bg-sidebar-accent" style={{ backgroundColor: "black" }}>
+              {item.icon && <item.icon  className="text-white" />}
+              <span className="text-white">{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
@@ -142,14 +145,16 @@ function NavUser({
   const { isMobile } = useSidebar()
 
   return (
-    <SidebarMenu>
+    <SidebarMenu style={{ backgroundColor: "black"
+      }}
+      className="text-white">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
               />
             }
           >
@@ -226,13 +231,17 @@ export function AppSidebar({
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon" {...props}>
-        <SidebarHeader>
+        <SidebarHeader style={{ backgroundColor: "black"}}>
           <TeamSwitcher teams={data.teams} />
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent style={{ backgroundColor: "black"
+      }}
+      className="text-white">
           <NavMain items={data.navMain} />
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter style={{ backgroundColor: "black"
+      }}
+      className="text-white">
           <NavUser user={data.user} />
         </SidebarFooter>
         <SidebarRail />
