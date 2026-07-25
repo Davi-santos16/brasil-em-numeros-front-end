@@ -11,51 +11,38 @@ type StatCardsProps = {
   regiao: string;
 };
 
-const TURQUOISE = "#0396A6";
-const ORANGE = "#F24822";
-const NAVY = "#012340";
-
 export function StatCards({
   media,
   maior,
   menor,
   regiao,
 }: StatCardsProps) {
-  const cards = [
-    {
-      titulo: `Média (${regiao})`,
-      valor: media.toFixed(2),
-      cor: TURQUOISE,
-    },
-    {
-      titulo: `Maior (${maior.nome})`,
-      valor: maior.valor,
-      cor: ORANGE,
-    },
-    {
-      titulo: `Menor (${menor.nome})`,
-      valor: menor.valor,
-      cor: ORANGE,
-    },
-  ];
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(num);
+  };
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {cards.map((card) => (
-        <div
-          key={card.titulo}
-          className="rounded-xl bg-[#F2F2F2] p-4 shadow-sm border-t-4"
-          style={{ borderTopColor: card.cor }}
-        >
-          <p className="text-xs text-[#012340]/60 mb-2">
-            {card.titulo}
-          </p>
+    <div className="grid gap-4 md:grid-cols-3">
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+        <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
+          Média ({regiao})
+        </h3>
+        <p className="text-xl font-bold text-[#012340]">{formatNumber(media)}</p>
+      </div>
+      
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+        <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
+          Maior ({maior.nome})
+        </h3>
+        <p className="text-xl font-bold text-[#012340]">{formatNumber(maior.valor)}</p>
+      </div>
 
-          <p className="text-3xl font-bold text-[#012340]">
-            {card.valor}
-          </p>
-        </div>
-      ))}
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+        <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
+          Menor ({menor.nome})
+        </h3>
+        <p className="text-xl font-bold text-[#012340]">{formatNumber(menor.valor)}</p>
+      </div>
     </div>
   );
 }

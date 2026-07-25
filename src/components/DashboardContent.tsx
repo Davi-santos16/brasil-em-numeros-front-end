@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { BarChart2, ChevronDown, Globe, LandPlot } from 'lucide-react';
+import { BrazilMap } from './BrazilMap';
+import { Filtros } from './filtros';
+import { StatCards } from './StatCards';
+import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardService } from '@/services/dashboard.service';
 import type { DashboardResponse } from '@/services/dashboard.service';
 import { api } from '@/lib/api';
@@ -16,19 +19,7 @@ interface Estado {
   };
 }
 
-const INDICADORES = [
-  { value: 'populacao', label: 'População' },
-  { value: 'densidade', label: 'Densidade' },
-  { value: 'area', label: 'Área' },
-];
 
-const REGIOES = [
-  { value: 'norte', label: 'Norte' },
-  { value: 'nordeste', label: 'Nordeste' },
-  { value: 'centro-oeste', label: 'Centro-Oeste' },
-  { value: 'sudeste', label: 'Sudeste' },
-  { value: 'sul', label: 'Sul' },
-];
 
 export function DashboardContent() {
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -74,10 +65,45 @@ export function DashboardContent() {
 
   if (loading) {
     return ( 
-      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed">
-        <span className="text-muted-foreground">
-          Carregando dados do servidor...
-        </span>
+      <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500">
+        {/* Skeleton dos Filtros */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex gap-4 h-[74px] items-center">
+           <Skeleton className="h-10 w-48 rounded-md" />
+           <Skeleton className="h-10 w-48 rounded-md" />
+        </div>
+
+        {/* Área principal Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Skeleton do Mapa */}
+          <div className="lg:col-span-1 rounded-xl border bg-card shadow-sm p-6 w-full h-[650px] relative">
+            <div className="absolute top-6 left-6 z-[400] pointer-events-none">
+              <Skeleton className="h-7 w-40 rounded-md mb-2" />
+              <Skeleton className="h-4 w-32 rounded-md" />
+            </div>
+            <div className="w-full h-full relative z-0 opacity-40 grayscale pointer-events-none transition-all duration-500">
+              <BrazilMap key="skeleton-map" />
+            </div>
+          </div>
+
+          {/* Skeleton do Painel Direito */}
+          <div className="lg:col-span-1 rounded-xl border bg-card shadow-sm p-6 w-full h-[650px] flex flex-col gap-6 bg-white">
+            {/* Título */}
+            <Skeleton className="h-8 w-3/4 rounded-md" />
+            
+            {/* StatCards */}
+            <div className="grid gap-4 md:grid-cols-3">
+               <Skeleton className="h-[88px] rounded-xl" />
+               <Skeleton className="h-[88px] rounded-xl" />
+               <Skeleton className="h-[88px] rounded-xl" />
+            </div>
+
+            {/* Gráfico */}
+            <Skeleton className="flex-1 rounded-xl" />
+
+            {/* Insight */}
+            <Skeleton className="h-[72px] rounded-lg" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -115,102 +141,93 @@ export function DashboardContent() {
     );
   }
 
+  // Extrair título e insight do layout do Plotly para renderizar em HTML
+  const tituloOriginal = data.figura.layout.title;
+  const tituloTexto = typeof tituloOriginal === 'object' ? tituloOriginal.text : tituloOriginal;
+  
+  const anotacoes = data.figura.layout.annotations || [];
+  const textoInsight = anotacoes.length > 0 ? anotacoes[0].text : "";
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-6">
-      {/* Filters Section */}
-      <div className="grid gap-4 md:grid-cols-3">
-        {/* Indicador */}
-        <div className="relative">
-          <BarChart2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <select
-            value={indicador}
-            onChange={(e) => setIndicador(e.target.value)}
-            className="w-full appearance-none rounded-lg border bg-card py-2.5 pl-9 pr-9 text-sm font-medium text-card-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-          >
-            {INDICADORES.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        </div>
-
-        {/* Região */}
-        <div className="relative">
-          <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <select
-            value={regiao}
-            onChange={(e) => setRegiao(e.target.value)}
-            className="w-full appearance-none rounded-lg border bg-card py-2.5 pl-9 pr-9 text-sm font-medium text-card-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-          >
-            {REGIOES.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        </div>
-
-        {/* Terceiro select estados */}
-        <div className="relative">
-          <LandPlot className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <select
-            value={estado}
-            onChange={(e) => setEstado(e.target.value)}
-            className="w-full appearance-none rounded-lg border bg-card py-2.5 pl-9 pr-9 text-sm font-medium text-card-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-          >
-            <option value="">- Selecione um estado</option>
-            {estadosFiltrados.map((est) => (
-              <option key={est.id} value={est.sigla.toLowerCase()}>
-                {est.nome}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        </div>
-      </div>
-      </div>
-      {/* KPI Section */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Média ({data.regiao})
-          </h3>
-          <p className="text-2xl font-bold">{data.kpis.media.toFixed(2)}</p>
-        </div>
-        
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Maior ({data.kpis.maior.nome})
-          </h3>
-          <p className="text-2xl font-bold text-emerald-600">{data.kpis.maior.valor}</p>
-        </div>
-
-        <div className="rounded-xl border bg-card text-card-foreground shadow p-4">
-          <h3 className="tracking-tight text-sm font-medium text-muted-foreground mb-1">
-            Menor ({data.kpis.menor.nome})
-          </h3>
-          <p className="text-2xl font-bold text-rose-600">{data.kpis.menor.valor}</p>
-        </div>
-      </div>
-
-      {/* Chart Section */}
-      <div className="rounded-xl border bg-card text-card-foreground shadow p-4 w-full h-[550px] flex justify-center">
-        <Plot
-          data={data.figura.data}
-          layout={{
-            ...data.figura.layout,
-            autosize: true,
-            margin: { t: 40, r: 20, l: 40, b: 120 },
-          }}
-          useResizeHandler
-          style={{ width: "100%", height: "100%" }}
+    <div className="flex flex-col gap-6 w-full">
+      {/* Barra superior de Filtros (ocupando toda a largura) */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <Filtros 
+          indicador={indicador}
+          setIndicador={setIndicador}
+          regiao={regiao}
+          setRegiao={setRegiao}
+          estado={estado}
+          setEstado={setEstado}
+          estadosFiltrados={estadosFiltrados}
         />
       </div>
 
+      {/* Área principal: Mapa e Gráfico */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Mapa à esquerda (Agora dentro de um Quadro) */}
+        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[650px] relative">
+          {/* Título do Mapa */}
+          <div className="absolute top-6 left-6 z-[400] pointer-events-none">
+            <h2 className="text-[#012340] text-xl font-bold">Mapa do Brasil</h2>
+            <p className="text-sm text-muted-foreground">Clique em um estado</p>
+          </div>
+          <div className="w-full h-full relative z-0">
+            <BrazilMap 
+              key="real-map"
+              regiaoSelecionada={regiao}
+              onRegiaoClick={(novaRegiao) => setRegiao(novaRegiao)}
+              estadosAPI={todosEstados}
+            />
+          </div>
+        </div>
+
+        {/* Painel Direito (Título, Stats, Gráfico, Insight) */}
+        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[650px] flex flex-col gap-6">
+          
+          {/* Título Nativo em React */}
+          <div className="flex flex-col">
+             <h2 className="text-[#012340] text-xl font-bold" dangerouslySetInnerHTML={{ __html: tituloTexto || '' }}></h2>
+          </div>
+
+          {/* Cards de KPI */}
+          <StatCards 
+            media={data.kpis.media}
+            maior={data.kpis.maior}
+            menor={data.kpis.menor}
+            regiao={regiao}
+          />
+
+          {/* Gráfico do Plotly (Limpo: sem título ou anotação nativa) */}
+          <div className="flex-1 min-h-0 relative">
+            <Plot
+              data={data.figura.data}
+              layout={{
+                ...data.figura.layout,
+                autosize: true,
+                margin: { t: 40, r: 20, l: 40, b: 40 }, // Margem superior aumentada para acomodar a toolbar
+                title: null, // Desabilita título nativo
+                annotations: [] // Desabilita anotações nativas
+              }}
+              config={{
+                displayModeBar: true,
+                displaylogo: false,
+                responsive: true
+              }}
+              useResizeHandler
+              style={{ width: "100%", height: "100%", position: "absolute" }}
+            />
+          </div>
+
+          {/* Anotação/Insight Nativa em React */}
+          {textoInsight && (
+            <div className="rounded-lg bg-gray-50/80 p-4 text-sm text-gray-700 mt-auto">
+              <span dangerouslySetInnerHTML={{ __html: textoInsight }} />
+            </div>
+          )}
+
+        </div>
+      </div>
     </div>
   );
 }
