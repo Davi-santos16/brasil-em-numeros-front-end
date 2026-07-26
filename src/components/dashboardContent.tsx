@@ -48,11 +48,15 @@ export function DashboardContent() {
       .catch(err => console.error('Erro ao buscar estados:', err));
   }, []);
 
-  // Preparar os estados para o select (todos os estados ordenados)
+  // Preparar os estados para o select (filtrados pela região atual)
   useEffect(() => {
-    const sorted = [...todosEstados].sort((a, b) => a.nome.localeCompare(b.nome));
-    setEstadosFiltrados(sorted);
-  }, [todosEstados]);
+    const filtered = [...todosEstados].filter(est => {
+      if (!est.regiao) return false;
+      const regiaoSlug = est.regiao.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+      return regiaoSlug === regiao;
+    }).sort((a, b) => a.nome.localeCompare(b.nome));
+    setEstadosFiltrados(filtered);
+  }, [todosEstados, regiao]);
 
   // Buscar dados do dashboard (Região)
   useEffect(() => {
@@ -151,7 +155,17 @@ export function DashboardContent() {
             setRegiao(val);
           }}
           estado={estado}
-          setEstado={setEstado}
+          setEstado={(val) => {
+            setEstado(val);
+            if (val) {
+              const estadoObj = estadosFiltrados.find(e => e.sigla.toLowerCase() === val.toLowerCase());
+              if (estadoObj) {
+                // Converte nome da região para o slug (ex: "Centro-Oeste" -> "centro-oeste")
+                const regionSlug = estadoObj.regiao.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                setRegiao(regionSlug);
+              }
+            }
+          }}
           estadosFiltrados={estadosFiltrados}
         />
       </div>
@@ -185,7 +199,11 @@ export function DashboardContent() {
               }}
               onEstadoClick={(novoEstado) => {
                 setEstado(novoEstado);
-                // A região não precisa ser alterada forçadamente, pois a UI vai focar no estado
+                const estadoObj = todosEstados.find(e => e.sigla.toLowerCase() === novoEstado.toLowerCase());
+                if (estadoObj) {
+                  const regionSlug = estadoObj.regiao.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                  setRegiao(regionSlug);
+                }
               }}
               estadosAPI={todosEstados}
             />

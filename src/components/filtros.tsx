@@ -4,6 +4,9 @@ interface Estado {
   id: number;
   sigla: string;
   nome: string;
+  regiao: {
+    nome: string;
+  };
 }
 
 interface FiltrosProps {
@@ -63,11 +66,10 @@ export function Filtros({
       <div className="relative">
         <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <select
-          value={estado ? "" : regiao}
+          value={regiao}
           onChange={(e) => setRegiao(e.target.value)}
           className="w-full appearance-none rounded-lg border bg-card py-2.5 pl-9 pr-9 text-sm font-medium text-card-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
-          {estado && <option value="" disabled>- Selecione uma região -</option>}
           {REGIOES.map((item) => (
             <option key={item.value} value={item.value}>
               {item.label}

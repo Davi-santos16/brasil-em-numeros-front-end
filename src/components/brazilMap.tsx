@@ -22,7 +22,6 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
     [-33.75, -34.793]
   ];
 
-  // Mapeia sigla do estado -> região (em lowercase)
   const stateToRegion = useMemo(() => {
     const map: Record<string, string> = {};
     estadosAPI.forEach((est) => {
@@ -31,16 +30,24 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
     return map;
   }, [estadosAPI]);
 
+  // Ref para armazenar os valores mais recentes das props e evitar bugs de closure nos eventos do Leaflet
+  const propsRef = useRef({ regiaoSelecionada, estadoSelecionado, stateToRegion });
+  useEffect(() => {
+    propsRef.current = { regiaoSelecionada, estadoSelecionado, stateToRegion };
+  }, [regiaoSelecionada, estadoSelecionado, stateToRegion]);
+
   // Função para atualizar as cores de todos os polígonos
   const applyColors = (hoveredRegiao: string | null = null, hoveredEstado: string | null = null) => {
+    const currentProps = propsRef.current;
+    
     Object.entries(layersRef.current).forEach(([sigla, layer]) => {
-      const regiaoDoEstado = stateToRegion[sigla];
+      const regiaoDoEstado = currentProps.stateToRegion[sigla];
       if (!regiaoDoEstado) return;
 
       const isStateHovered = hoveredEstado === sigla;
-      const isStateSelected = estadoSelecionado?.toLowerCase() === sigla;
+      const isStateSelected = currentProps.estadoSelecionado?.toLowerCase() === sigla;
       const isRegionHovered = hoveredRegiao === regiaoDoEstado;
-      const isRegionSelected = regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
+      const isRegionSelected = currentProps.regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
 
       const l = layer as L.Path;
       
