@@ -2,13 +2,9 @@
 
 import * as React from "react"
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LayoutDashboard,
   LogOut,
-  Sparkles,
   Map,
 } from "lucide-react"
 
