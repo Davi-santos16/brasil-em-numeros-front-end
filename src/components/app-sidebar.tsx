@@ -2,13 +2,9 @@
 
 import * as React from "react"
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LayoutDashboard,
   LogOut,
-  Sparkles,
   Map,
 } from "lucide-react"
 
@@ -44,11 +40,13 @@ import {
 } from "@/components/ui/sidebar"
 
 // This is sample data.
+import rodrigoImg from "@/assets/img-rodrigo.jpeg"
+
 const data = {
   user: {
-    name: "Administrador",
-    email: "admin@ibge.gov.br",
-    avatar: "",
+    name: "Rodrigo",
+    email: "rodrigo@admin.com",
+    avatar: rodrigoImg,
   },
   teams: [
     {
@@ -88,12 +86,12 @@ function TeamSwitcher({
         <SidebarMenuButton
           size="lg"
           render={<div />}
-          className="cursor-default hover:bg-transparent"
+          className="cursor-pointer hover:bg-transparent"
         >
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#1565C0] text-white">
             <activeTeam.logo className="size-4" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
+          <div className="grid flex-1 text-left text-sm leading-tight hover:text-gray-900 text-gray-900">
             <span className="truncate font-medium">{activeTeam.name}</span>
             <span className="truncate text-xs">{activeTeam.plan}</span>
           </div>
@@ -115,13 +113,18 @@ function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Menu</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-gray-500 font-medium">Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton render={<div />} tooltip={item.title} isActive={item.isActive} className="cursor-default hover:bg-sidebar-accent">
-              {item.icon && <item.icon />}
-              <span>{item.title}</span>
+            <SidebarMenuButton 
+              render={<div />} 
+              tooltip={item.title} 
+              isActive={item.isActive} 
+              className="cursor-pointer transition-colors hover:bg-blue-50 hover:text-[#1565C0] data-[active=true]:bg-blue-50 data-[active=true]:text-[#1565C0] text-gray-700"
+            >
+              {item.icon && <item.icon className="text-inherit" />}
+              <span className="text-inherit font-medium">{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
@@ -149,7 +152,7 @@ function NavUser({
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
               />
             }
           >
@@ -186,28 +189,6 @@ function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
-                Upgrade
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Conta
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Faturamento
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notificações
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
                 <LogOut />
                 Sair
               </DropdownMenuItem>
@@ -225,7 +206,7 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & { children?: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" {...props}>
+      <Sidebar collapsible="icon" className="bg-white border-r" {...props}>
         <SidebarHeader>
           <TeamSwitcher teams={data.teams} />
         </SidebarHeader>

@@ -21,15 +21,19 @@ export interface DashboardResponse {
   };
 }
 
+export interface DashboardParams {
+  indicador: string;
+  regiao: string;
+}
+
 export const DashboardService = {
-  async getDashboardData(): Promise<DashboardResponse> {
+  async getDashboardData(params: DashboardParams): Promise<DashboardResponse> {
     const response = await api.get<any>('/dashboard', {
       params: {
-        indicador: 'densidade',
-        regiao: 'norte'
-      }
+        indicador: params.indicador,
+        regiao: params.regiao,
+      },
     });
-    // Se o backend retornar dentro de 'dadosDaEquipe', extrai. Senão, usa a raiz.
     return response.data.dadosDaEquipe || response.data;
-  }
-}
+  },
+};
