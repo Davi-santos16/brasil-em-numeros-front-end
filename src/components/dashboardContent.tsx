@@ -157,9 +157,9 @@ export function DashboardContent() {
       </div>
 
       {/* Área principal: Mapa e Gráfico */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start w-full">
         {/* Mapa à esquerda (Agora dentro de um Quadro) */}
-        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[650px] relative">
+        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[400px] lg:h-[650px] relative">
           {/* Título do Mapa */}
           <div className="absolute top-6 left-6 z-[400] pointer-events-none bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100">
             <h2 className="text-gray-900 text-lg font-bold mb-1">Mapa do Brasil</h2>
@@ -193,7 +193,7 @@ export function DashboardContent() {
         </div>
 
         {/* Painel Direito (Título, Stats, Gráfico, Insight) ou Detalhes do Estado */}
-        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[650px] flex flex-col gap-6">
+        <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full min-h-[500px] lg:h-[650px] flex flex-col gap-4 lg:gap-6 overflow-hidden">
           
           {estado && loadingEstado ? (
              <div className="flex flex-col gap-6 w-full h-full justify-center">
@@ -223,23 +223,24 @@ export function DashboardContent() {
               />
 
               {/* Gráfico do Plotly (Limpo: sem título ou anotação nativa) */}
-              <div className="flex-1 min-h-0 relative">
+              <div className="flex-1 min-h-[220px] lg:min-h-0 relative overflow-hidden">
                 <Plot
                   data={data.figura.data}
                   layout={{
                     ...data.figura.layout,
                     autosize: true,
-                    margin: { t: 40, r: 20, l: 40, b: 40 }, // Margem superior aumentada para acomodar a toolbar
-                    title: null, // Desabilita título nativo
-                    annotations: [] // Desabilita anotações nativas
+                    margin: { t: 10, r: 90, l: 80, b: 50 },
+                    title: undefined,
+                    annotations: []
                   }}
                   config={{
                     displayModeBar: true,
                     displaylogo: false,
-                    responsive: true
+                    responsive: true,
+                    modeBarButtonsToRemove: ['select2d', 'lasso2d'],
                   }}
                   useResizeHandler
-                  style={{ width: "100%", height: "100%", position: "absolute" }}
+                  style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0 }}
                 />
               </div>
 
