@@ -1,15 +1,16 @@
 import { useEffect, useState, useMemo } from 'react';
 import Plot from 'react-plotly.js';
-import { BrazilMap } from './BrazilMap';
+import { BrazilMap } from './brazilMap';
 import { Filtros } from './filtros';
-import { StatCards } from './StatCards';
+import { StatCards } from './statCards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardService } from '@/services/dashboard.service';
 import type { DashboardResponse } from '@/services/dashboard.service';
 import { IndicadoresService } from '@/services/indicadores.service';
 import type { IndicadoresResponse } from '@/services/indicadores.service';
 import { api } from '@/lib/api';
-import { EstadoCards } from './EstadoCards';
+import { EstadoCards } from './estadoCards';
+import { DashboardSkeleton } from './dashboardSkeleton';
 
 interface Estado {
   id: number;
@@ -91,48 +92,7 @@ export function DashboardContent() {
   }, [estado, todosEstados]);
 
   if (loading) {
-    return ( 
-      <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500">
-        {/* Skeleton dos Filtros */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex gap-4 h-[74px] items-center">
-           <Skeleton className="h-10 w-48 rounded-md" />
-           <Skeleton className="h-10 w-48 rounded-md" />
-        </div>
-
-        {/* Área principal Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Skeleton do Mapa */}
-          <div className="lg:col-span-1 rounded-xl border bg-card shadow-sm p-6 w-full h-[650px] relative">
-            <div className="absolute top-6 left-6 z-[400] pointer-events-none">
-              <Skeleton className="h-7 w-40 rounded-md mb-2" />
-              <Skeleton className="h-4 w-32 rounded-md" />
-            </div>
-            <div className="w-full h-full relative z-0 opacity-40 grayscale pointer-events-none transition-all duration-500">
-              <BrazilMap key="skeleton-map" />
-            </div>
-          </div>
-
-          {/* Skeleton do Painel Direito */}
-          <div className="lg:col-span-1 rounded-xl border bg-card shadow-sm p-6 w-full h-[650px] flex flex-col gap-6 bg-white">
-            {/* Título */}
-            <Skeleton className="h-8 w-3/4 rounded-md" />
-            
-            {/* StatCards */}
-            <div className="grid gap-4 md:grid-cols-3">
-               <Skeleton className="h-[88px] rounded-xl" />
-               <Skeleton className="h-[88px] rounded-xl" />
-               <Skeleton className="h-[88px] rounded-xl" />
-            </div>
-
-            {/* Gráfico */}
-            <Skeleton className="flex-1 rounded-xl" />
-
-            {/* Insight */}
-            <Skeleton className="h-[72px] rounded-lg" />
-          </div>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
@@ -202,14 +162,14 @@ export function DashboardContent() {
         <div className="lg:col-span-1 rounded-xl border bg-card text-card-foreground shadow-sm p-6 w-full h-[650px] relative">
           {/* Título do Mapa */}
           <div className="absolute top-6 left-6 z-[400] pointer-events-none bg-white/80 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-gray-100">
-            <h2 className="text-[#012340] text-lg font-bold mb-1">Mapa do Brasil</h2>
+            <h2 className="text-gray-900 text-lg font-bold mb-1">Mapa do Brasil</h2>
             <div className="flex flex-col gap-1 text-xs text-muted-foreground font-medium">
               <span className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#0396A6]"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-[#42A5F5]"></div>
                 1 Clique: Seleciona a Região
               </span>
               <span className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#012340]"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-[#1565C0]"></div>
                 2 Cliques: Seleciona o Estado
               </span>
             </div>
@@ -251,7 +211,7 @@ export function DashboardContent() {
             <>
               {/* Título Nativo em React */}
               <div className="flex flex-col">
-                 <h2 className="text-[#012340] text-xl font-bold" dangerouslySetInnerHTML={{ __html: tituloTexto || '' }}></h2>
+                 <h2 className="text-gray-900 text-xl font-bold" dangerouslySetInnerHTML={{ __html: tituloTexto || '' }}></h2>
               </div>
 
               {/* Cards de KPI */}

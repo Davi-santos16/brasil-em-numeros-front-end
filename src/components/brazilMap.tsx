@@ -46,12 +46,12 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
       
       // Estado sobreposto ou selecionado tem a cor mais escura
       if (isStateHovered || isStateSelected) {
-        l.setStyle({ fillColor: '#012340' }); // Marinho institucional
+        l.setStyle({ fillColor: '#1565C0' }); // Blue 1
         l.bringToFront();
       } 
       // Região sobreposta ou selecionada tem a cor destaque original
       else if (isRegionHovered || isRegionSelected) {
-        l.setStyle({ fillColor: '#0396A6' }); // Verde-água
+        l.setStyle({ fillColor: '#42A5F5' }); // Blue 3
         if (isRegionHovered) l.bringToFront();
       } 
       // Cor padrão
@@ -73,14 +73,14 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
     const isRegionSelected = regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
     
     let color = '#E2E8F0';
-    if (isStateSelected) color = '#012340';
-    else if (isRegionSelected) color = '#0396A6';
+    if (isStateSelected) color = '#1565C0';
+    else if (isRegionSelected) color = '#42A5F5';
 
     return {
       fillColor: color, // Aplica a cor dinamicamente na raiz
       weight: 1, // Borda fina
       opacity: 1,
-      color: '#012340', // Marinho profundo
+      color: '#000000', // Preto
       fillOpacity: 1,
     };
   };

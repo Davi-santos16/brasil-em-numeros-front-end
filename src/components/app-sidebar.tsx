@@ -44,11 +44,13 @@ import {
 } from "@/components/ui/sidebar"
 
 // This is sample data.
+import rodrigoImg from "@/assets/img-rodrigo.jpeg"
+
 const data = {
   user: {
-    name: "Administrador",
-    email: "admin@ibge.gov.br",
-    avatar: "",
+    name: "Rodrigo",
+    email: "rodrigo@admin.com",
+    avatar: rodrigoImg,
   },
   teams: [
     {
@@ -83,20 +85,17 @@ function TeamSwitcher({
   }
 
   return (
-    <SidebarMenu 
-    style={{ backgroundColor: "black"
-    }}
-    className="text-white">
+    <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
           render={<div />}
           className="cursor-pointer hover:bg-transparent"
         >
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#1565C0] text-white">
             <activeTeam.logo className="size-4" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight hover:text-stone-300">
+          <div className="grid flex-1 text-left text-sm leading-tight hover:text-gray-900 text-gray-900">
             <span className="truncate font-medium">{activeTeam.name}</span>
             <span className="truncate text-xs">{activeTeam.plan}</span>
           </div>
@@ -117,14 +116,19 @@ function NavMain({
   }[]
 }) {
   return (
-    <SidebarGroup style={{ backgroundColor: "black"}}>
-      <SidebarGroupLabel className="text-white">Menu</SidebarGroupLabel>
+    <SidebarGroup>
+      <SidebarGroupLabel className="text-gray-500 font-medium">Menu</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton  render={<div />} tooltip={item.title} isActive={item.isActive} className="cursor-pointer hover:bg-sidebar-accent" style={{ backgroundColor: "black" }}>
-              {item.icon && <item.icon  className="text-white" />}
-              <span className="text-white">{item.title}</span>
+            <SidebarMenuButton 
+              render={<div />} 
+              tooltip={item.title} 
+              isActive={item.isActive} 
+              className="cursor-pointer transition-colors hover:bg-blue-50 hover:text-[#1565C0] data-[active=true]:bg-blue-50 data-[active=true]:text-[#1565C0] text-gray-700"
+            >
+              {item.icon && <item.icon className="text-inherit" />}
+              <span className="text-inherit font-medium">{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
@@ -145,9 +149,7 @@ function NavUser({
   const { isMobile } = useSidebar()
 
   return (
-    <SidebarMenu style={{ backgroundColor: "black"
-      }}
-      className="text-white">
+    <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -191,28 +193,6 @@ function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
-                Upgrade
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Conta
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Faturamento
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notificações
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
                 <LogOut />
                 Sair
               </DropdownMenuItem>
@@ -230,18 +210,14 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & { children?: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" {...props}>
-        <SidebarHeader style={{ backgroundColor: "black"}}>
+      <Sidebar collapsible="icon" className="bg-white border-r" {...props}>
+        <SidebarHeader>
           <TeamSwitcher teams={data.teams} />
         </SidebarHeader>
-        <SidebarContent style={{ backgroundColor: "black"
-      }}
-      className="text-white">
+        <SidebarContent>
           <NavMain items={data.navMain} />
         </SidebarContent>
-        <SidebarFooter style={{ backgroundColor: "black"
-      }}
-      className="text-white">
+        <SidebarFooter>
           <NavUser user={data.user} />
         </SidebarFooter>
         <SidebarRail />

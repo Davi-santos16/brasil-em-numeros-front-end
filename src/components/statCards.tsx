@@ -23,25 +23,25 @@ export function StatCards({
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center h-[104px]">
         <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
           Média ({regiao})
         </h3>
-        <p className="text-xl font-bold text-[#012340]">{formatNumber(media)}</p>
+        <p className="text-xl font-bold text-gray-900">{formatNumber(media)}</p>
       </div>
       
-      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center h-[104px]">
         <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
           Maior ({maior.nome})
         </h3>
-        <p className="text-xl font-bold text-[#012340]">{formatNumber(maior.valor)}</p>
+        <p className="text-xl font-bold text-gray-900">{formatNumber(maior.valor)}</p>
       </div>
 
-      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center">
+      <div className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center h-[104px]">
         <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
           Menor ({menor.nome})
         </h3>
-        <p className="text-xl font-bold text-[#012340]">{formatNumber(menor.valor)}</p>
+        <p className="text-xl font-bold text-gray-900">{formatNumber(menor.valor)}</p>
       </div>
     </div>
   );

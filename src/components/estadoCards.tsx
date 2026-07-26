@@ -45,7 +45,12 @@ export function EstadoCards({ indicadores, estadoNome }: EstadoCardsProps) {
   ];
 
   const minValue = Math.min(...realValues);
-  const customColors = realValues.map(v => v === minValue ? '#94A3B8' : '#008FFB');
+  const maxValue = Math.max(...realValues);
+  const customColors = realValues.map(v => {
+    if (v === minValue) return '#94A3B8'; // Menor: Cinza
+    if (v === maxValue) return '#1565C0'; // Maior: Azul 1
+    return '#42A5F5'; // Médio: Azul 3
+  });
 
   // Aplicamos Log10 para as fatias ficarem visíveis e proporcionais visualmente
   // (já que população é milhões e densidade é dezenas)
@@ -59,7 +64,7 @@ export function EstadoCards({ indicadores, estadoNome }: EstadoCardsProps) {
     chart: {
       type: "polarArea",
       fontFamily: "Inter, sans-serif",
-      toolbar: { 
+      toolbar: {
         show: true,
         tools: {
           download: true,
@@ -81,7 +86,7 @@ export function EstadoCards({ indicadores, estadoNome }: EstadoCardsProps) {
       colors: ["#ffffff"],
     },
     yaxis: {
-      show: false, // Esconde os números do eixo logarítmico
+      show: false,
     },
     legend: {
       position: "bottom",
@@ -128,7 +133,7 @@ export function EstadoCards({ indicadores, estadoNome }: EstadoCardsProps) {
   return (
     <div className="flex flex-col w-full h-full">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-[#012340] mb-1">{estadoNome}</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-1">{estadoNome}</h3>
         <p className="text-sm text-muted-foreground">
           Visão detalhada dos indicadores estaduais
         </p>
@@ -138,19 +143,19 @@ export function EstadoCards({ indicadores, estadoNome }: EstadoCardsProps) {
         {cards.map((card, i) => (
           <div
             key={i}
-            className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center"
+            className="rounded-xl border bg-card shadow-sm p-4 flex flex-col justify-center h-[104px]"
           >
             <h3 className="tracking-tight text-xs font-medium text-muted-foreground mb-1">
               {card.title} ({card.description})
             </h3>
-            <p className="text-xl font-bold text-[#012340]">{card.value}</p>
+            <p className="text-xl font-bold text-gray-900">{card.value}</p>
           </div>
         ))}
       </div>
 
       {/* Gráfico Polar Area */}
       <div className="flex-1 flex flex-col min-h-0 bg-white border rounded-xl shadow-sm p-4 items-center justify-center">
-        <h4 className="text-sm font-bold text-[#012340] mb-2 self-start w-full text-center">
+        <h4 className="text-sm font-bold text-gray-900 mb-2 self-start w-full text-center">
           Proporção das Métricas
         </h4>
         <div className="w-full h-full min-h-[300px] flex items-center justify-center">
