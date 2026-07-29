@@ -16,6 +16,12 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
   const dadosGeoJson = brazilStatesData as any;
   const referenciaCamadas = useRef<Record<string, L.Layer>>({});
 
+  const fecharTodosTooltips = () => {
+    Object.values(referenciaCamadas.current).forEach((camada) => {
+      camada.closeTooltip();
+    });
+  };
+
   // Bounding Box do Brasil
   const limitesBrasil: L.LatLngBoundsExpression = [
     [5.2718, -73.983],
@@ -103,14 +109,22 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
     camada.bindTooltip(`<b>${nomeEstado}</b>`, {
       direction: 'auto',
       className: 'bg-white p-2 rounded shadow-md border border-gray-200 text-sm',
+      interactive: false,
+      sticky: false,
     });
 
     camada.on({
       mouseover: () => {
+        // O bringToFront altera a ordem dos SVGs e o Chrome pode perder o
+        // fechamento automático do Leaflet. Mantemos apenas um tooltip aberto.
+        fecharTodosTooltips();
+        camada.openTooltip();
+
         const regiao = estadoParaRegiao[sigla];
         if (regiao) aplicarCores(regiao, sigla); // Passa região e estado para o hover
       },
       mouseout: () => {
+        camada.closeTooltip();
         aplicarCores(null, null); // Volta ao estado original
       },
       click: () => {
@@ -128,7 +142,13 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
   };
 
   return (
-    <div className="w-full h-full rounded-xl overflow-hidden bg-transparent z-0">
+    <div
+      className="w-full h-full rounded-xl overflow-hidden bg-transparent z-0"
+      onMouseLeave={() => {
+        fecharTodosTooltips();
+        aplicarCores(null, null);
+      }}
+    >
       <MapContainer
         bounds={limitesBrasil}
         boundsOptions={{ padding: [10, 10] }}
