@@ -1,11 +1,11 @@
 import "./index.css"
 import { AppSidebar } from "@/components/app-sidebar"
-import { DashboardPage } from "@/pages/dashboardPage"
+import { PaginaPainel } from "@/pages/dashboardPage"
 
 function App() {
   return (
     <AppSidebar>
-      <DashboardPage />
+      <PaginaPainel />
     </AppSidebar>
   )
 }

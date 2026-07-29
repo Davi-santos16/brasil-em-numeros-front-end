@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { BrazilMap } from "./brazilMap";
+import { MapaBrasil } from "./brazilMap";
 
-export function DashboardSkeleton() {
+export function EsqueletoPainel() {
   return (
     <div className="flex flex-col gap-6 w-full animate-in fade-in duration-500">
       {/* Skeleton dos Filtros */}
@@ -19,7 +19,7 @@ export function DashboardSkeleton() {
             <Skeleton className="h-4 w-32 rounded-md" />
           </div>
           <div className="w-full h-full relative z-0 opacity-40 grayscale pointer-events-none transition-all duration-500">
-            <BrazilMap key="skeleton-map" />
+            <MapaBrasil key="skeleton-map" />
           </div>
         </div>
 
@@ -28,7 +28,7 @@ export function DashboardSkeleton() {
           {/* Título */}
           <Skeleton className="h-8 w-3/4 rounded-md" />
           
-          {/* StatCards */}
+          {/* CartoesEstatisticas */}
           <div className="grid gap-4 md:grid-cols-3">
              <Skeleton className="h-[104px] rounded-xl" />
              <Skeleton className="h-[104px] rounded-xl" />

@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 
-export interface DashboardResponse {
+export interface RespostaPainel {
   indicador: string;
   regiao: string;
   figura: {
@@ -21,19 +21,19 @@ export interface DashboardResponse {
   };
 }
 
-export interface DashboardParams {
+export interface ParametrosPainel {
   indicador: string;
   regiao: string;
 }
 
-export const DashboardService = {
-  async getDashboardData(params: DashboardParams): Promise<DashboardResponse> {
-    const response = await api.get<any>('/dashboard', {
+export const ServicoPainel = {
+  async obterDadosPainel(parametros: ParametrosPainel): Promise<RespostaPainel> {
+    const resposta = await api.get<any>('/dashboard', {
       params: {
-        indicador: params.indicador,
-        regiao: params.regiao,
+        indicador: parametros.indicador,
+        regiao: parametros.regiao,
       },
     });
-    return response.data.dadosDaEquipe || response.data;
+    return resposta.data.dadosDaEquipe || resposta.data;
   },
 };

@@ -4,87 +4,87 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import brazilStatesData from '@/assets/brazil-states.json';
 
-interface BrazilMapProps {
+interface PropriedadesMapaBrasil {
   regiaoSelecionada?: string;
   estadoSelecionado?: string | null;
-  onRegiaoClick?: (regiao: string) => void;
-  onEstadoClick?: (estado: string) => void;
-  estadosAPI?: any[];
+  aoClicarRegiao?: (regiao: string) => void;
+  aoClicarEstado?: (estado: string) => void;
+  estadosApi?: any[];
 }
 
-export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick, onEstadoClick, estadosAPI = [] }: BrazilMapProps) {
-  const geojsonData = brazilStatesData as any;
-  const layersRef = useRef<Record<string, L.Layer>>({});
+export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegiao, aoClicarEstado, estadosApi = [] }: PropriedadesMapaBrasil) {
+  const dadosGeoJson = brazilStatesData as any;
+  const referenciaCamadas = useRef<Record<string, L.Layer>>({});
 
   // Bounding Box do Brasil
-  const brazilBounds: L.LatLngBoundsExpression = [
+  const limitesBrasil: L.LatLngBoundsExpression = [
     [5.2718, -73.983],
     [-33.75, -34.793]
   ];
 
-  const stateToRegion = useMemo(() => {
-    const map: Record<string, string> = {};
-    estadosAPI.forEach((est) => {
-      map[est.sigla.toLowerCase()] = est.regiao.nome.toLowerCase();
+  const estadoParaRegiao = useMemo(() => {
+    const mapa: Record<string, string> = {};
+    estadosApi.forEach((estado) => {
+      mapa[estado.sigla.toLowerCase()] = estado.regiao.nome.toLowerCase();
     });
-    return map;
-  }, [estadosAPI]);
+    return mapa;
+  }, [estadosApi]);
 
   // Ref para armazenar os valores mais recentes das props e evitar bugs de closure nos eventos do Leaflet
-  const propsRef = useRef({ regiaoSelecionada, estadoSelecionado, stateToRegion });
+  const referenciaPropriedades = useRef({ regiaoSelecionada, estadoSelecionado, estadoParaRegiao });
   useEffect(() => {
-    propsRef.current = { regiaoSelecionada, estadoSelecionado, stateToRegion };
-  }, [regiaoSelecionada, estadoSelecionado, stateToRegion]);
+    referenciaPropriedades.current = { regiaoSelecionada, estadoSelecionado, estadoParaRegiao };
+  }, [regiaoSelecionada, estadoSelecionado, estadoParaRegiao]);
 
   // Função para atualizar as cores de todos os polígonos
-  const applyColors = (hoveredRegiao: string | null = null, hoveredEstado: string | null = null) => {
-    const currentProps = propsRef.current;
+  const aplicarCores = (regiaoSobCursor: string | null = null, estadoSobCursor: string | null = null) => {
+    const propriedadesAtuais = referenciaPropriedades.current;
     
-    Object.entries(layersRef.current).forEach(([sigla, layer]) => {
-      const regiaoDoEstado = currentProps.stateToRegion[sigla];
+    Object.entries(referenciaCamadas.current).forEach(([sigla, camada]) => {
+      const regiaoDoEstado = propriedadesAtuais.estadoParaRegiao[sigla];
       if (!regiaoDoEstado) return;
 
-      const isStateHovered = hoveredEstado === sigla;
-      const isStateSelected = currentProps.estadoSelecionado?.toLowerCase() === sigla;
-      const isRegionHovered = hoveredRegiao === regiaoDoEstado;
-      const isRegionSelected = currentProps.regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
+      const estadoEstaSobCursor = estadoSobCursor === sigla;
+      const estadoEstaSelecionado = propriedadesAtuais.estadoSelecionado?.toLowerCase() === sigla;
+      const regiaoEstaSobCursor = regiaoSobCursor === regiaoDoEstado;
+      const regiaoEstaSelecionada = propriedadesAtuais.regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
 
-      const l = layer as L.Path;
+      const caminho = camada as L.Path;
       
       // Estado sobreposto ou selecionado tem a cor mais escura
-      if (isStateHovered || isStateSelected) {
-        l.setStyle({ fillColor: '#1565C0' }); // Blue 1
-        l.bringToFront();
+      if (estadoEstaSobCursor || estadoEstaSelecionado) {
+        caminho.setStyle({ fillColor: '#1565C0' });
+        caminho.bringToFront();
       } 
       // Região sobreposta ou selecionada tem a cor destaque original
-      else if (isRegionHovered || isRegionSelected) {
-        l.setStyle({ fillColor: '#42A5F5' }); // Blue 3
-        if (isRegionHovered) l.bringToFront();
+      else if (regiaoEstaSobCursor || regiaoEstaSelecionada) {
+        caminho.setStyle({ fillColor: '#42A5F5' });
+        if (regiaoEstaSobCursor) caminho.bringToFront();
       } 
       // Cor padrão
       else {
-        l.setStyle({ fillColor: '#E2E8F0' }); // Cinza claro
+        caminho.setStyle({ fillColor: '#E2E8F0' });
       }
     });
   };
 
   // Quando a região ou estado muda, re-aplicamos as cores
   useEffect(() => {
-    applyColors();
-  }, [regiaoSelecionada, estadoSelecionado, stateToRegion]);
+    aplicarCores();
+  }, [regiaoSelecionada, estadoSelecionado, estadoParaRegiao]);
 
-  const styleFeature = (feature: any) => {
+  const estilizarElemento = (feature: any) => {
     const sigla = feature.properties.sigla.toLowerCase();
-    const regiaoDoEstado = stateToRegion[sigla];
-    const isStateSelected = estadoSelecionado?.toLowerCase() === sigla;
-    const isRegionSelected = regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
+    const regiaoDoEstado = estadoParaRegiao[sigla];
+    const estadoEstaSelecionado = estadoSelecionado?.toLowerCase() === sigla;
+    const regiaoEstaSelecionada = regiaoSelecionada?.toLowerCase() === regiaoDoEstado;
     
-    let color = '#E2E8F0';
-    if (isStateSelected) color = '#1565C0';
-    else if (isRegionSelected) color = '#42A5F5';
+    let cor = '#E2E8F0';
+    if (estadoEstaSelecionado) cor = '#1565C0';
+    else if (regiaoEstaSelecionada) cor = '#42A5F5';
 
     return {
-      fillColor: color, // Aplica a cor dinamicamente na raiz
+      fillColor: cor,
       weight: 1, // Borda fina
       opacity: 1,
       color: '#000000', // Preto
@@ -92,36 +92,36 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
     };
   };
 
-  const onEachFeature = (feature: any, layer: L.Layer) => {
-    const sigla = feature.properties.sigla.toLowerCase();
-    const stateName = feature.properties.name;
+  const configurarElemento = (elemento: any, camada: L.Layer) => {
+    const sigla = elemento.properties.sigla.toLowerCase();
+    const nomeEstado = elemento.properties.name;
     
     // Guarda a referência do layer do estado para pintarmos depois
-    layersRef.current[sigla] = layer;
+    referenciaCamadas.current[sigla] = camada;
 
     // Adicionando Tooltip nativo do Leaflet
-    layer.bindTooltip(`<b>${stateName}</b>`, {
+    camada.bindTooltip(`<b>${nomeEstado}</b>`, {
       direction: 'auto',
       className: 'bg-white p-2 rounded shadow-md border border-gray-200 text-sm',
     });
 
-    layer.on({
+    camada.on({
       mouseover: () => {
-        const regiao = stateToRegion[sigla];
-        if (regiao) applyColors(regiao, sigla); // Passa região e estado para o hover
+        const regiao = estadoParaRegiao[sigla];
+        if (regiao) aplicarCores(regiao, sigla); // Passa região e estado para o hover
       },
       mouseout: () => {
-        applyColors(null, null); // Volta ao estado original
+        aplicarCores(null, null); // Volta ao estado original
       },
       click: () => {
-        const regiao = stateToRegion[sigla];
-        if (regiao && onRegiaoClick) {
-          onRegiaoClick(regiao);
+        const regiao = estadoParaRegiao[sigla];
+        if (regiao && aoClicarRegiao) {
+          aoClicarRegiao(regiao);
         }
       },
       dblclick: () => {
-        if (onEstadoClick) {
-          onEstadoClick(sigla);
+        if (aoClicarEstado) {
+          aoClicarEstado(sigla);
         }
       },
     });
@@ -130,7 +130,7 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
   return (
     <div className="w-full h-full rounded-xl overflow-hidden bg-transparent z-0">
       <MapContainer
-        bounds={brazilBounds}
+        bounds={limitesBrasil}
         boundsOptions={{ padding: [10, 10] }}
         style={{ height: '100%', width: '100%', background: 'transparent' }}
         zoomControl={false}
@@ -143,9 +143,9 @@ export function BrazilMap({ regiaoSelecionada, estadoSelecionado, onRegiaoClick,
         keyboard={false}
       >
         <GeoJSON
-          data={geojsonData}
-          style={styleFeature}
-          onEachFeature={onEachFeature}
+          data={dadosGeoJson}
+          style={estilizarElemento}
+          onEachFeature={configurarElemento}
         />
       </MapContainer>
     </div>

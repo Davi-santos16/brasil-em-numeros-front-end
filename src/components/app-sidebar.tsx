@@ -52,12 +52,12 @@ const data = {
     {
       name: "Brasil em Números",
       logo: Map,
-      plan: "Dashboard",
+      plan: "Painel",
     }
   ],
   navMain: [
     {
-      title: "Dashboard",
+      title: "Painel",
       url: "#",
       icon: LayoutDashboard,
       isActive: true,
