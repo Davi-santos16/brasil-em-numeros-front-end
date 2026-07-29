@@ -60,12 +60,10 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
       // Estado sobreposto ou selecionado tem a cor mais escura
       if (estadoEstaSobCursor || estadoEstaSelecionado) {
         caminho.setStyle({ fillColor: '#1565C0' });
-        caminho.bringToFront();
       } 
       // Região sobreposta ou selecionada tem a cor destaque original
       else if (regiaoEstaSobCursor || regiaoEstaSelecionada) {
         caminho.setStyle({ fillColor: '#42A5F5' });
-        if (regiaoEstaSobCursor) caminho.bringToFront();
       } 
       // Cor padrão
       else {
@@ -115,8 +113,7 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
 
     camada.on({
       mouseover: () => {
-        // O bringToFront altera a ordem dos SVGs e o Chrome pode perder o
-        // fechamento automático do Leaflet. Mantemos apenas um tooltip aberto.
+        // Mantemos apenas um tooltip aberto durante a troca entre estados.
         fecharTodosTooltips();
         camada.openTooltip();
 
@@ -143,7 +140,7 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
 
   return (
     <div
-      className="w-full h-full rounded-xl overflow-hidden bg-transparent z-0"
+      className="mapa-brasil w-full h-full rounded-xl overflow-hidden bg-transparent z-0"
       onMouseLeave={() => {
         fecharTodosTooltips();
         aplicarCores(null, null);
