@@ -37,10 +37,28 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
   }, [estadosApi]);
 
   // Ref para armazenar os valores mais recentes das props e evitar bugs de closure nos eventos do Leaflet
-  const referenciaPropriedades = useRef({ regiaoSelecionada, estadoSelecionado, estadoParaRegiao });
+  const referenciaPropriedades = useRef({
+    regiaoSelecionada,
+    estadoSelecionado,
+    estadoParaRegiao,
+    aoClicarRegiao,
+    aoClicarEstado,
+  });
   useEffect(() => {
-    referenciaPropriedades.current = { regiaoSelecionada, estadoSelecionado, estadoParaRegiao };
-  }, [regiaoSelecionada, estadoSelecionado, estadoParaRegiao]);
+    referenciaPropriedades.current = {
+      regiaoSelecionada,
+      estadoSelecionado,
+      estadoParaRegiao,
+      aoClicarRegiao,
+      aoClicarEstado,
+    };
+  }, [
+    regiaoSelecionada,
+    estadoSelecionado,
+    estadoParaRegiao,
+    aoClicarRegiao,
+    aoClicarEstado,
+  ]);
 
   // Função para atualizar as cores de todos os polígonos
   const aplicarCores = (regiaoSobCursor: string | null = null, estadoSobCursor: string | null = null) => {
@@ -117,7 +135,7 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
         fecharTodosTooltips();
         camada.openTooltip();
 
-        const regiao = estadoParaRegiao[sigla];
+        const regiao = referenciaPropriedades.current.estadoParaRegiao[sigla];
         if (regiao) aplicarCores(regiao, sigla); // Passa região e estado para o hover
       },
       mouseout: () => {
@@ -125,14 +143,17 @@ export function MapaBrasil({ regiaoSelecionada, estadoSelecionado, aoClicarRegia
         aplicarCores(null, null); // Volta ao estado original
       },
       click: () => {
-        const regiao = estadoParaRegiao[sigla];
-        if (regiao && aoClicarRegiao) {
-          aoClicarRegiao(regiao);
+        const { estadoParaRegiao: mapaRegioes, aoClicarRegiao: clicarRegiao } =
+          referenciaPropriedades.current;
+        const regiao = mapaRegioes[sigla];
+        if (regiao && clicarRegiao) {
+          clicarRegiao(regiao);
         }
       },
       dblclick: () => {
-        if (aoClicarEstado) {
-          aoClicarEstado(sigla);
+        const clicarEstado = referenciaPropriedades.current.aoClicarEstado;
+        if (clicarEstado) {
+          clicarEstado(sigla);
         }
       },
     });
